@@ -47,8 +47,30 @@ namespace lib
     {
         using BaseClass = BasicProperty<T>;
     public:
-        constexpr PropertyState() noexcept : BaseClass{T{}} {}
-        constexpr PropertyState(T iv) noexcept : BaseClass{ std::move(iv) } {}
+        constexpr PropertyState() noexcept : BaseClass{}, next_{} {}
+        constexpr PropertyState(T iv) noexcept : BaseClass{ iv }, next_{ iv } {}
+
+        constexpr void operator=(const T&v) noexcept { set(v); }
+
+        constexpr bool hasChanged() const noexcept { return m_hasChanged; }
+        constexpr void swapValues() noexcept { m_hasChanged = false; m_value = next_.get(); }
+        constexpr void setChanged() noexcept { m_hasChanged = true; }
+        constexpr bool readResetHasChanged() noexcept { const bool v{ m_hasChanged }; swapValues(); return v; }
+        const T &get() const noexcept override { return m_value; }
+        void set(const T&v) noexcept override { next_.set(v); setChanged(); }
+
+    private:
+        BasicProperty<T> next_;
+        bool m_hasChanged{ true };
+    };
+/*
+    template <typename T>
+    class PropertyDoubleBuffered : public BasicProperty<T>
+    {
+        using BaseClass = BasicProperty<T>;
+    public:
+        constexpr PropertyDoubleBuffered() noexcept : BaseClass{T{}}, next_{T{}} {}
+        constexpr PropertyDoubleBuffered(const T& iv) noexcept : BaseClass{ iv }, next_{iv} {}
 
         constexpr void operator=(const T&v) noexcept { set(v); }
 
@@ -60,9 +82,10 @@ namespace lib
         void set(const T&v) noexcept override { m_value = v; setChanged(); }
 
     private:
+        BasicProperty<T> next_;
         bool m_hasChanged{ true };
     };
-
+*/
     template<typename T, typename ...Args>
     constexpr bool ps_hasChanged(const PropertyState<T> &arg, Args&&... args)
     {
