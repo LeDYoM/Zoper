@@ -110,13 +110,14 @@ namespace lib::core
 
     sptr<scene::IFont> ResourceManager::getBMPFont(const str &rid)
     {
-        return msptr<scene::BMPFont>(rid, rid, *this);
+        return get_or_default(m_private->bmp_fonts_, rid);
     }
 
     sptr<scene::TTFont> ResourceManager::loadTTFont(const str & rid, const str & fileName)
     {
         return get_or_add<true>(systemProvider().backendFactory().ttfontFactory(), m_private->ttf_fonts_, systemProvider().fileSystem(),  rid, fileName);
     }
+
     sptr<scene::Texture> ResourceManager::loadTexture(const str & rid, const str & fileName)
     {
         return get_or_add<true>(systemProvider().backendFactory().textureFactory(), m_private->textures_, systemProvider().fileSystem(), rid, fileName);
@@ -128,6 +129,20 @@ namespace lib::core
 
     sptr<scene::BMPFont> ResourceManager::loadBMPFont(const str &rid, const str &fileName)
     {
-        return msptr<scene::BMPFont>(rid, fileName, *this);
+        auto font(get_or_add<true>(systemProvider().backendFactory().bmpFontFactory(), m_private->bmp_fonts_, systemProvider().fileSystem(), rid, fileName));
+        if (font)
+        {
+            auto glyph_file_names(font->glyphFileNames());
+            vector<sptr<scene::Texture>> textures(glyph_file_names.size());
+            std::transform(glyph_file_names.cbegin(), glyph_file_names.cend(),
+            textures.begin(),
+            [this](const auto& glyph_file_name)
+            {
+                return this->loadTexture(glyph_file_name);
+            }
+            );
+        }
+
+        return font;
     }
 }

@@ -45,6 +45,29 @@ namespace lib::scene
         delete fontPrivate;
     }
 
+    const vector<str>& BMPFont::glyphFileNames() const
+    {
+        vector<str> result(fontPrivate->pagesData_.size());
+
+        for (const auto& file : fontPrivate->pagesData_)
+        {
+            result.push_back(file.file);
+        }
+
+        return result;
+    }
+
+    void BMPFont::setGlyphTextures(const vector<sptr<Texture>>& textures)
+    {
+        assert_debug(textures.size() == fontPrivate->pagesData_.size(), 
+        "The size of the vector passed to loadGlyphTextures is different from the size of pages");
+
+        for (u32 i(0U); i < fontPrivate->pagesData_.size(); ++i)
+        {
+            fontPrivate->pagesData_[i].it = textures[i];
+        }
+    }
+
     void filterStr(std::stringstream &LineStream, std::string &Value)
     {
         bool doNext = true;

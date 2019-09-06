@@ -27,6 +27,8 @@ namespace lib::scene
         sptr<ITexture> getTexture() const override;
         vector2df textSize(const str& text) const override;
         const vector2du32 &size() const;
+        const vector<str>& glyphFileNames() const;
+        void setGlyphTextures(const vector<sptr<Texture>>& textures);
 
     private:
         BMFontPrivate *fontPrivate;
