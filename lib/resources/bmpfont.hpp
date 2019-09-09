@@ -4,19 +4,17 @@
 #define LIB_SCENE_RESOURCES_BMPFONT_INCLUDE_HPP
 
 #include <mtypes/include/types.hpp>
+#include <backend_dev/include/ibmpfont.hpp>
+#include <backend_dev/include/itexture.hpp>
 
-#include <lib/include/resources/ifont.hpp>
-#include <lib/include/resources/iresourcehandler.hpp>
-#include "texture.hpp"
-
-namespace lib::scene
+namespace lib::backend::bmpf
 {
     class BMFontPrivate;
 
-    class BMPFont : public IFont
+    class BMPFont : public IBMPFont
     {
     public:
-        BMPFont(const str& id, const str& file_name, IResourceHandler& resource_handler);
+        BMPFont(const str& id, const str& file_name);
         ~BMPFont() override;
 
         Rectf32 getBounds(const u32 codePoint) const override;

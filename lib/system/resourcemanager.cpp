@@ -129,17 +129,19 @@ namespace lib::core
 
     sptr<scene::BMPFont> ResourceManager::loadBMPFont(const str &rid, const str &fileName)
     {
-        auto font(get_or_add<true>(systemProvider().backendFactory().bmpFontFactory(), m_private->bmp_fonts_, systemProvider().fileSystem(), rid, fileName));
+        auto font(get_or_add<true>(systemProvider().backendFactory().bmpFontFactory(), 
+            m_private->bmp_fonts_, systemProvider().fileSystem(), rid, fileName));
+
         if (font)
         {
             auto glyph_file_names(font->glyphFileNames());
             vector<sptr<scene::Texture>> textures(glyph_file_names.size());
             std::transform(glyph_file_names.cbegin(), glyph_file_names.cend(),
             textures.begin(),
-            [this](const auto& glyph_file_name)
-            {
-                return this->loadTexture(glyph_file_name);
-            }
+                [this](const auto& glyph_file_name)
+                {
+                    return this->loadTexture(glyph_file_name);
+                }
             );
         }
 

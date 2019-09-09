@@ -18,7 +18,7 @@ namespace lib::backend::bmpf
         IBMPFont *loadFromRawMemory(RawMemory *raw_memory) override;
         ~BMPFontFactory() override;
     private:
-        vector<uptr<scene::BMPFont>> m_fontCache;
+        vector<uptr<BMPFont>> m_fontCache;
     };
 }
 

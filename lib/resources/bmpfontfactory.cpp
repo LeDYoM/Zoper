@@ -6,11 +6,8 @@ namespace lib::backend::bmpf
 {
     IBMPFont* BMPFontFactory::loadFromFile(const str & file)
     {
-        uptr<sf::Font> font(muptr<sf::Font>());
-        font->loadFromFile(file.c_str());
-        uptr<TTFont> t{ muptr<TTFont>(std::move(font), RawMemory{} ) };
-        m_fontCache.push_back(std::move(t));
-        return (*(m_fontCache.end() - 1)).get();
+        uptr<BMPFont> font(muptr<BMPFont>("", file));
+        return (*(m_fontCache.end() - 1)).get();        
     }
 
     IBMPFont * BMPFontFactory::loadFromRawMemory(RawMemory * raw_memory)
