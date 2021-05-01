@@ -6,23 +6,15 @@
 #include <haf/shareddata/include/ishareable.hpp>
 #include <haf/shareddata/include/address.hpp>
 
-#include <hlog/include/hlog.hpp>
-
 namespace haf::shdata
 {
 /**
  * @brief DataWrapper to provide access to data resources.
  * This wrapper can be used standalone or as a base class of other wrappers.
  */
-class SharedData : public sys::IDataWrapper
+class SharedData
 {
 public:
-    using BaseClass = sys::IDataWrapper;
-
-    /**
-     * @brief Use base class constructors.
-     */
-    using BaseClass::BaseClass;
 
     /**
      * @brief Store an IShareable data element in the system. If the address
@@ -32,7 +24,7 @@ public:
      * @return true Successfully stored.
      * @return false Not stored.
      */
-    bool store(Address const& address, IShareable const& data);
+    virtual bool store(Address const& address, IShareable const& data) = 0;
 
     /**
      * @brief Retrieve an element from the system.
@@ -41,7 +33,7 @@ public:
      * @return true Successfully retrieved.
      * @return false Error retrieving the element.
      */
-    [[nodiscard]] bool retrieve(Address const& address, IShareable& data);
+    virtual bool retrieve(Address const& address, IShareable& data) = 0;
 
     /**
      * @brief Ask if the system contains any data.
@@ -49,8 +41,9 @@ public:
      * @return true 
      * @return false 
      */
-    [[nodiscard]] bool isEmpty();
-    bool makeEmpty();
+    virtual bool isEmpty() const noexcept = 0;
+
+    virtual bool makeEmpty() = 0;
 };
 
 }  // namespace haf::shdata

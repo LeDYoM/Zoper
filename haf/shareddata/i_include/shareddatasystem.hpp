@@ -4,6 +4,7 @@
 #include <htypes/include/types.hpp>
 #include <system/i_include/systembase.hpp>
 #include <haf/shareddata/include/ishareable.hpp>
+#include <haf/shareddata/include/shareddata.hpp>
 
 namespace haf::shdata
 {
@@ -16,7 +17,7 @@ namespace haf::sys
  * @brief Thisis a system whose only purpose is to store data shared
  * between different objects on the system.
  */
-class SharedDataSystem final : public SystemBase
+class SharedDataSystem final : public SystemBase, public shdata::SharedData
 {
 public:
     using SystemBase::SystemBase;
@@ -35,7 +36,7 @@ public:
      * @return true The object has been stored.
      * @return false if cannot store the object.
      */
-    bool store(shdata::Address const& address, shdata::IShareable const& data);
+    bool store(shdata::Address const& address, shdata::IShareable const& data) override;
 
     /**
      * @brief Retrieve the stored object in the SharedData system.
@@ -45,7 +46,7 @@ public:
      * @return If successful.
      */
     [[nodiscard]] bool retrieve(shdata::Address const& address,
-                                shdata::IShareable& data);
+                                shdata::IShareable& data) override;
 
     /**
      * @brief Ask if the system has an object stored
@@ -53,7 +54,7 @@ public:
      * @return true There is an object stored
      * @return false No object stored currently
      */
-    bool isEmpty() const noexcept;
+    bool isEmpty() const noexcept override;
 
     /**
      * @brief Make the Shared object empty.
@@ -61,7 +62,7 @@ public:
      * @return true It was not empty. Now it is.
      * @return false It was empty already, no actions performed.
      */
-    bool makeEmpty();
+    bool makeEmpty() override;
 
 private:
     htps::Object data_object_;

@@ -5,6 +5,8 @@
 #include <system/i_include/systemprovider.hpp>
 #include <system/i_include/systemdatawrappercreator.hpp>
 #include <haf/system/include/datawrappercreator.hpp>
+#include <haf/scene/include/interface_getter.hpp>
+
 #include <shareddata/i_include/shareddatasystem.hpp>
 #include <time/i_include/timesystem.hpp>
 #include <scene/i_include/scenemanager.hpp>
@@ -35,6 +37,20 @@ public:
         haf::sys::setInitSystem<T>(init_system_options);
     }
 
+    template <typename Y>
+    T& systemInterface()
+    {
+        haf::sys::SystemAccess system_access(&system_provider_);
+        return haf::sys::getInterface<Y>(system_access);
+    }
+
+    template <typename Y>
+    T const& systemInterface() const
+    {
+        haf::sys::SystemAccess system_access(&system_provider_);
+        return haf::sys::getInterface<Y>(system_access);
+    }
+
     haf::sys::SystemProvider& systemProvider() noexcept
     {
         return system_provider_;
@@ -44,6 +60,8 @@ public:
     {
         return system_provider_;
     }
+
+
 
     template <typename S>
     S& system()

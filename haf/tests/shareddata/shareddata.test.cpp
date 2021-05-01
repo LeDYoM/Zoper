@@ -19,8 +19,9 @@ TEST_CASE("SharedData::SharedData", "[haf][shareddatasystem]")
 
     SECTION("Retrieve from empty")
     {
-        auto shared_data_wrapper{dwc.dataWrapper<SharedData>()};
-        bool const retrieve_result = shared_data_wrapper->retrieve(
+        SharedData& shared_data_wrapper{
+            test_shared_data->systemInterface<SharedData>()};
+        bool const retrieve_result = shared_data_wrapper.retrieve(
             ShareableTestData::address(), shareable_test_data);
 
         CHECK_FALSE(retrieve_result);
@@ -32,8 +33,9 @@ TEST_CASE("SharedData::SharedData", "[haf][shareddatasystem]")
         shareable_test_data.b = 123.33F;
         shareable_test_data.c = "hello test";
 
-        auto shared_data_wrapper{dwc.dataWrapper<SharedData>()};
-        bool const store_result = shared_data_wrapper->store(
+        SharedData& shared_data_wrapper{
+            test_shared_data->systemInterface<SharedData>()};
+        bool const store_result = shared_data_wrapper.store(
             ShareableTestData::address(), shareable_test_data);
 
         CHECK(store_result);
@@ -45,7 +47,7 @@ TEST_CASE("SharedData::SharedData", "[haf][shareddatasystem]")
         CHECK(result.c == "");
 
         bool const retrieve_result =
-            shared_data_wrapper->retrieve(ShareableTestData::address(), result);
+            shared_data_wrapper.retrieve(ShareableTestData::address(), result);
 
         CHECK(retrieve_result);
         CHECK(result.a == 42);
