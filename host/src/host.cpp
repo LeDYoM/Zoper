@@ -21,13 +21,13 @@ Host::Host(int argc, char* argv[]) : p_{muptr<HostPrivate>(argc, argv)}
 Host::~Host()
 {
     DisplayLog::info("Terminating Host...");
-    DisplayLog::verbose_if(!p_->app_group_.app_.empty(),
-                           p_->app_group_.app_.size(),
+    DisplayLog::verbose_if(!p_->app_group_.empty(),
+                           p_->app_group_.size(),
                            " pending apps to be terminated");
 
-    while (!p_->app_group_.app_.empty())
+    while (!p_->app_group_.empty())
     {
-        HostedApplication& last = p_->app_group_.app_.back();
+        HostedApplication const& last = p_->app_group_.back();
         p_->unloadApplication(last.app_name_);
     }
 

@@ -49,15 +49,14 @@ bool Host::HostPrivate::loopStep()
 
 bool Host::HostPrivate::update()
 {
-    auto& app = app_group_.currentHostedApplication();
-
-    switch (app.app_state)
+    switch (app_group_.currentHostedApplication().app_state)
     {
         case AppState::NotInitialized:
             break;
         case AppState::ReadyToStart:
         {
             DisplayLog::info("Starting initialization of new App...");
+            auto& app         = app_group_.currentHostedApplication();
             app.app_state     = AppState::Executing;
             auto const result = system_loader_.loadFunctions();
             if (result != SystemControllerLoader::ResultType::Success)
@@ -72,10 +71,16 @@ bool Host::HostPrivate::update()
             }
             else
             {
-                systemController()->init(app.managed_app_.app, nullptr,
-                                         backend_factory_.get(), argc_, argv_);
+                auto host_connector_impl = muptr<HostConnectorImpl>(*this);
+                auto host_connector =
+                    muptr<HostConnector>(std::move(host_connector_impl));
+                app.managed_app_.app->receiveHostConnector(
+                    std::move(host_connector));
+                systemController()->init(
+                    app_group_.currentHostedApplication().managed_app_.app,
+                    nullptr, backend_factory_.get(), argc_, argv_);
 
-                DisplayLog::info(appDisplayNameAndVersion(app),
+                DisplayLog::info(appDisplayNameAndVersion(app_group_.currentHostedApplication()),
                                  ": Starting execution...");
             }
         }
@@ -84,6 +89,7 @@ bool Host::HostPrivate::update()
         {
             if (loopStep())
             {
+                auto& app     = app_group_.currentHostedApplication();
                 app.app_state = AppState::ReadyToTerminate;
                 DisplayLog::info(appDisplayNameAndVersion(app),
                                  ": is now ready to terminate");
@@ -91,13 +97,17 @@ bool Host::HostPrivate::update()
         }
         break;
         case AppState::ReadyToTerminate:
+        {
+            auto& app = app_group_.currentHostedApplication();
+
             DisplayLog::info(appDisplayNameAndVersion(app),
                              ": started termination");
             app.app_state = AppState::Terminated;
             systemController()->terminate();
             system_loader_.destroy();
             return true;
-            break;
+        }
+        break;
         case AppState::Terminated:
             return true;
             break;
@@ -109,10 +119,7 @@ bool Host::HostPrivate::update()
 
 bool Host::HostPrivate::addApplication(ManagedApp managed_app, htps::str name)
 {
-    auto host_connector_impl = muptr<HostConnectorImpl>(*this);
-    auto host_connector = muptr<HostConnector>(std::move(host_connector_impl));
-    return app_group_.try_add_app(std::move(managed_app), std::move(name),
-                                  std::move(host_connector));
+    return app_group_.try_add_app(std::move(managed_app), std::move(name));
 }
 
 bool Host::HostPrivate::loadApplication(htps::str const& app_name)

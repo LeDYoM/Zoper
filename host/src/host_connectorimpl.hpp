@@ -10,6 +10,9 @@ class HostConnectorImpl final
 public:
     HostConnectorImpl(Host::HostPrivate& host_private);
     ~HostConnectorImpl();
+
+    bool loadApplication(htps::str const& app_name);
+
 private:
 
     Host::HostPrivate& host_private_;

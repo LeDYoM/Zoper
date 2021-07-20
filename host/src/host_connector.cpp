@@ -12,8 +12,7 @@ HostConnector::~HostConnector() = default;
 
 bool HostConnector::loadApplication(htps::str const& app_name)
 {
-    (void)(app_name);
-    return true;
+    return host_connector_impl_->loadApplication(app_name);
 }
 
 }  // namespace haf::host

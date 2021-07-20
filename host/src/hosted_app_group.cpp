@@ -7,6 +7,16 @@ using namespace htps;
 
 namespace haf::host
 {
+bool HostedAppGroup::empty() const noexcept
+{
+    return app_.empty();
+}
+
+size_type HostedAppGroup::size() const noexcept
+{
+    return app_.size();
+}
+
 HostedApplication& HostedAppGroup::currentHostedApplication()
 {
     return app_[index_current_app];
@@ -33,8 +43,7 @@ void HostedAppGroup::setCurrentAppState(AppState const app_state) noexcept
 }
 
 bool HostedAppGroup::try_add_app(ManagedApp managed_app,
-                                 htps::str name,
-                                 uptr<HostConnector> host_connector)
+                                 htps::str name)
 {
     LogAsserter::log_assert(managed_app.app != nullptr,
                             "Received nullptr Application");
@@ -47,7 +56,7 @@ bool HostedAppGroup::try_add_app(ManagedApp managed_app,
     if (is_new_app)
     {
         DisplayLog::info("Starting Registering app...");
-        add_app(std::move(managed_app), std::move(name), std::move(host_connector));
+        add_app(std::move(managed_app), std::move(name));
         DisplayLog::verbose("Starting new app...");
         setCurrentAppState(AppState::ReadyToStart);
     }
@@ -87,16 +96,14 @@ bool HostedAppGroup::removeApp(htps::str const& app_name)
 bool HostedAppGroup::appExists(htps::str const& name) noexcept
 {
     // Search for a pointer to the same app
-    return (app_.cfind(HostedApplication{ManagedApp{}, name, nullptr}) !=
+    return (app_.cfind(HostedApplication{ManagedApp{}, name}) !=
             app_.cend());
 }
 
 void HostedAppGroup::add_app(ManagedApp&& app,
-                             htps::str name,
-                             uptr<HostConnector> host_connector)
+                             htps::str name)
 {
-    app_.emplace_back(std::move(app), std::move(name),
-                      std::move(host_connector));
+    app_.emplace_back(std::move(app), std::move(name));
 }
 
 }  // namespace haf::host

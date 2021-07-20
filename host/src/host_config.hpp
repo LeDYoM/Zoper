@@ -24,7 +24,7 @@ public:
         parseCommandLineParameters();
     }
 
-    str configuredFirstApp() const { return "Zoper"; }
+    str configuredFirstApp() const { return "haf_app_middleware"; }
 
     void loadConfigFile()
     {

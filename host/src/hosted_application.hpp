@@ -6,7 +6,6 @@
 #include "app_loader.hpp"
 #include "app_state.hpp"
 #include <hosted_app/include/iapp.hpp>
-#include <host_connector/include/ihost_connector.hpp>
 
 namespace haf::host
 {
@@ -14,12 +13,10 @@ class HostedApplication final
 {
 public:
     HostedApplication(ManagedApp managed_app,
-                      htps::str app_name,
-                      htps::uptr<IHostConnector> host_connector) noexcept;
+                      htps::str app_name) noexcept;
 
     ManagedApp managed_app_;
     htps::str app_name_;
-    htps::uptr<IHostConnector> host_connector_;
     AppState app_state{AppState::NotInitialized};
 };
 

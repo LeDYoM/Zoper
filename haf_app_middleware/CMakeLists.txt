@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.14)
 project(
-  "haf_app_firmware"
+  "haf_app_middleware"
   VERSION 0.1.1.1
-  DESCRIPTION "HAF Application firmware"
+  DESCRIPTION "HAF Application middleware"
   # [HOMEPAGE_URL <url-string>]
   LANGUAGES CXX)
 
@@ -23,3 +23,4 @@ build_client_library(
 
 # Extension libraries
 target_link_libraries(${CURRENT_TARGET} PRIVATE haf_user)
+target_link_libraries(${CURRENT_TARGET} PRIVATE host_connector)

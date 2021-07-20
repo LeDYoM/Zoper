@@ -3,6 +3,6 @@
 
 #include <haf_user/include/declare_app.hpp>
 
-DECLARE_APP(haf::app_middleware, HafAppMiddleware)
+DECLARE_HOST_CONNECTED_APP(haf::app_middleware, HafAppMiddleware)
 
 #endif

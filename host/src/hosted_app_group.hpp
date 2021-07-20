@@ -8,13 +8,15 @@
 
 namespace haf::host
 {
-class HostConnector;
 class HostedAppGroup final
 {
 public:
-    htps::vector<HostedApplication> app_;
-    htps::u32 index_current_app{0U};
+    using AppVector = htps::vector<HostedApplication>;
 
+    bool empty() const noexcept;
+    htps::size_type size() const noexcept;
+
+    HostedApplication const& back() const { return app_.back(); }
     HostedApplication& currentHostedApplication();
     HostedApplication const& currentHostedApplication() const;
     htps::rptr<IApp const> currentApp() const;
@@ -23,8 +25,7 @@ public:
     void setCurrentAppState(AppState const app_state) noexcept;
 
     bool try_add_app(ManagedApp managed_app,
-                     htps::str name,
-                     htps::uptr<HostConnector> host_connector);
+                     htps::str name);
     bool removeApp(htps::str const& app_name);
     bool appExists(htps::str const& name) noexcept;
 
@@ -43,9 +44,11 @@ public:
     }
 
 private:
+    AppVector app_;
+    htps::u32 index_current_app{0U};
+
     void add_app(ManagedApp&& app,
-                 htps::str name,
-                 htps::uptr<HostConnector> host_connector);
+                 htps::str name);
 };
 
 }  // namespace haf::host
