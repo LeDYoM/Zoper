@@ -56,9 +56,9 @@ bool HostedAppGroup::try_add_app(ManagedApp managed_app,
     if (is_new_app)
     {
         DisplayLog::info("Starting Registering app...");
-        add_app(std::move(managed_app), std::move(name));
+        auto& result = add_app(std::move(managed_app), std::move(name));
         DisplayLog::verbose("Starting new app...");
-        setCurrentAppState(AppState::ReadyToStart);
+        result.app_state = AppState::ReadyToStart;
     }
 
     return is_new_app;
@@ -100,10 +100,16 @@ bool HostedAppGroup::appExists(htps::str const& name) noexcept
             app_.cend());
 }
 
-void HostedAppGroup::add_app(ManagedApp&& app,
+HostedApplication& HostedAppGroup::add_app(ManagedApp&& app,
                              htps::str name)
 {
     app_.emplace_back(std::move(app), std::move(name));
+    return app_.back();
+}
+
+void HostedAppGroup::roundRobin()
+{
+    index_current_app = ((index_current_app + 1) % app_.size());
 }
 
 }  // namespace haf::host

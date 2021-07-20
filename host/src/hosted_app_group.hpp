@@ -43,11 +43,13 @@ public:
         });
     }
 
+    void roundRobin();
+
 private:
     AppVector app_;
     htps::u32 index_current_app{0U};
 
-    void add_app(ManagedApp&& app,
+    HostedApplication& add_app(ManagedApp&& app,
                  htps::str name);
 };
 

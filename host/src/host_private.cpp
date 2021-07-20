@@ -49,6 +49,8 @@ bool Host::HostPrivate::loopStep()
 
 bool Host::HostPrivate::update()
 {
+    bool result{false};
+
     switch (app_group_.currentHostedApplication().app_state)
     {
         case AppState::NotInitialized:
@@ -105,16 +107,17 @@ bool Host::HostPrivate::update()
             app.app_state = AppState::Terminated;
             systemController()->terminate();
             system_loader_.destroy();
-            return true;
+            result = true;
         }
         break;
         case AppState::Terminated:
-            return true;
+            result = true;
             break;
         default:
             break;
     }
-    return false;
+    app_group_.roundRobin();
+    return result;
 }
 
 bool Host::HostPrivate::addApplication(ManagedApp managed_app, htps::str name)
